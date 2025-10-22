@@ -1,39 +1,12 @@
 "use client"
 import Link from "next/link"
 import { HiChevronLeft, HiChevronRight, HiMenu, HiOutlineChat, HiSearch, HiX } from "react-icons/hi"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "../components/ui/sheet"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../components/ui/sheet"
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel"
 
 export default function Home() {
-  const [open, setOpen] = useState(false)
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set())
-
-  useEffect(() => {
-    // Enable smooth scrolling
-    document.documentElement.style.scrollBehavior = "smooth"
-
-    // Set up intersection observer for fade-in animations
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set(prev).add(entry.target.id))
-          }
-        })
-      },
-      { threshold: 0.1 },
-    )
-
-    const sections = document.querySelectorAll("section[id]")
-    sections.forEach((section) => observer.observe(section))
-
-    return () => {
-      sections.forEach((section) => observer.unobserve(section))
-    }
-  }, [])
-
   const emblems = [
     {
       name: "the ridge realty group",
@@ -129,46 +102,43 @@ export default function Home() {
   const carouselData = [
     {
       src: "/images/gallery1.webp",
-    },
+    }, 
     {
       src: "/images/gallery2.webp",
-    },
+    }, 
     {
       src: "/images/gallery3.webp",
-    },
+    }, 
     {
       src: "/images/gallery4.webp",
-    },
+    }, 
     {
       src: "/images/gallery5.webp",
-    },
+    }, 
     {
       src: "/images/gallery6.webp",
-    },
+    }, 
     {
       src: "/images/gallery7.webp",
     },
-  ]
+  ];
 
   const services = [
     {
       title: "Real Estate Done Right",
-      description:
-        "Nervous about your property adventure? Don't be. Whether you're getting ready to buy or sell your residence, looking at investment properties, or just curious about the markets, our team ensures you get the best experience possible!",
+      description: "Nervous about your property adventure? Don’t be. Whether you're getting ready to buy or sell your residence, looking at investment properties, or just curious about the markets, our team ensures you get the best experience possible!",
       image: "/images/services1.webp",
     },
     {
       title: "Commercial & Residential",
-      description:
-        "Large or small, condo or mansion, we can find it and get at the price that's right. Fixer-uppers? Luxury? We can help with all of it! We live, work, and play in this community. Happy to help you find where to put you hard-earned dollars.",
+      description: "Large or small, condo or mansion, we can find it and get at the price that's right. Fixer-uppers? Luxury? We can help with all of it! We live, work, and play in this community. Happy to help you find where to put you hard-earned dollars.",
       image: "/images/services2.webp",
     },
     {
       title: "Rely on Expertise",
-      description:
-        "If you have questions about affordability, credit, and loan options, trust us to connect you with the right people to get the answers you need in a timely fashion. We make sure you feel confident and educated every step of the way.",
+      description: "If you have questions about affordability, credit, and loan options, trust us to connect you with the right people to get the answers you need in a timely fashion. We make sure you feel confident and educated every step of the way.",
       image: "/images/services3.webp",
-    },
+    }
   ]
 
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -179,10 +149,11 @@ export default function Home() {
     baths: "",
     minPrice: "",
     maxPrice: "",
-  })
-  const [hasSearched, setHasSearched] = useState(false)
-  const [sortBy, setSortBy] = useState("price-low")
-  const [expandedImage, setExpandedImage] = useState<string | null>(null)
+  });
+  const [hasSearched, setHasSearched] = useState(false);
+  const [sortBy, setSortBy] = useState("price-low");
+  const [expandedImage, setExpandedImage] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev === 0 ? whyChooseUs.length - 1 : prev - 1))
@@ -196,12 +167,21 @@ export default function Home() {
     setHasSearched(true)
   }
 
-  const handleNavClick = () => {
+  const handleNavClick = (targetId: string) => {
     setOpen(false)
+
+    // Wait for sheet closing animation to complete (300ms based on sheet animation duration)
+    setTimeout(() => {
+      const element = document.getElementById(targetId)
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" })
+      }
+    }, 350)
   }
 
   const propertyTypes = [...new Set(listings.map((l) => l.type))]
   const locations = [...new Set(listings.map((l) => l.location))]
+  
 
   const filteredListings = listings.filter((listing) => {
     const locationMatch = !searchFilters.location || listing.location === searchFilters.location
@@ -229,6 +209,7 @@ export default function Home() {
     }
   })
 
+
   return (
     <div className="flex flex-wrap w-full justify-center">
       <div className="flex flex-col items-center grow w-full">
@@ -244,19 +225,43 @@ export default function Home() {
                 </div>
               </SheetTitle>
               <div className="flex flex-col items-center gap-10 uppercase tracking-widest pt-40 text-lg text-muted-foreground">
-                <Link href="#home" className="hover:text-primary transition-colors" onClick={handleNavClick}>
+                <Link
+                  href="#home"
+                  className="hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavClick("home")
+                  }}
+                >
                   Home
                 </Link>
-                <Link href="#profile" className="hover:text-primary transition-colors" onClick={handleNavClick}>
+                <Link
+                  href="#profile"
+                  className="hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavClick("profile")
+                  }}
+                >
                   About Us
                 </Link>
-                <Link href="#listings" className="hover:text-primary transition-colors" onClick={handleNavClick}>
+                <Link
+                  href="#listings"
+                  className="hover:text-primary transition-colors"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavClick("listings")
+                  }}
+                >
                   Listings
                 </Link>
                 <Link
                   href="#contact"
                   className="flex w-fit items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-colors"
-                  onClick={handleNavClick}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handleNavClick("contact")
+                  }}
                 >
                   <HiOutlineChat className="text-2xl" /> Let&apos;s Talk
                 </Link>
@@ -278,31 +283,19 @@ export default function Home() {
               <img src="/images/logo.webp" alt="marci_metzger_homes_logo" />
             </div>
             <div className="hidden md:flex flex-wrap gap-2 justify-between w-full max-w-xl text-center items-center uppercase text-sm font-semibold tracking-widest mt-2">
-              <Link
-                href="#home"
-                className="transition duration-150 underline-offset-4 hover:text-accent hover:underline"
-              >
+              <Link href="#home" className="transition duration-150 underline-offset-4 hover:text-accent hover:underline">
                 Home
               </Link>
-
-              <Link
-                href="#profile"
-                className="transition duration-150 underline-offset-4 hover:text-accent hover:underline"
-              >
+              
+              <Link href="#profile" className="transition duration-150 underline-offset-4 hover:text-accent hover:underline">
                 About Us
               </Link>
 
-              <Link
-                href="#listings"
-                className="transition duration-150 underline-offset-4 hover:text-accent hover:underline"
-              >
+              <Link href="#listings" className="transition duration-150 underline-offset-4 hover:text-accent hover:underline">
                 Listings
               </Link>
 
-              <Link
-                href="#contact"
-                className="transition duration-150 underline-offset-4 hover:text-accent hover:underline"
-              >
+              <Link href="#contact" className="transition duration-150 underline-offset-4 hover:text-accent hover:underline">
                 contact Us
               </Link>
             </div>
@@ -323,10 +316,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="profile"
-          className={`flex justify-center relative w-full overflow-hidden bg-background transition-all duration-1000 ${visibleSections.has("profile") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="profile" className="flex justify-center relative w-full overflow-hidden bg-background">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl px-4 md:px-6 py-16 md:py-24">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
@@ -343,9 +333,7 @@ export default function Home() {
 
                   <div className="space-y-6">
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                      Marci was a REALTOR, then licensed Broker, in Washington State. Now, she is enjoying the sunshine,
-                      and helping clients in Southern Nevada. Having helped buyers and sellers in many markets since
-                      1995, she is a wealth of knowledge.
+                      Marci was a REALTOR, then licensed Broker, in Washington State. Now, she is enjoying the sunshine, and helping clients in Southern Nevada. Having helped buyers and sellers in many markets since 1995, she is a wealth of knowledge.
                     </p>
                   </div>
 
@@ -387,10 +375,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="why-choose-us"
-          className={`px-6 py-30 bg-background text-foreground w-full transition-all duration-1000 ${visibleSections.has("why-choose-us") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="why-choose-us" className="px-6 py-30 bg-background text-foreground w-full">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl">
               <div className="flex flex-col items-center text-center gap-6 md:gap-8 mb-12 md:mb-16">
@@ -690,10 +675,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="gallery"
-          className={`flex justify-center relative w-full overflow-hidden bg-background transition-all duration-1000 ${visibleSections.has("gallery") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="gallery" className="flex justify-center relative w-full overflow-hidden bg-background">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl px-4 md:px-6 py-12 md:py-16">
               <div className="space-y-6 md:space-y-8">
@@ -776,17 +758,17 @@ export default function Home() {
         <section id="emblems" className="flex justify-center relative w-full overflow-hidden bg-white">
           <div className="grid grid-cols-2 md:grid-cols-4 w-full max-w-6xl gap-4 py-30 px-4">
             {emblems.map((emblem, index) => (
-              <div key={index} className="flex justify-center items-center p-4 rounded-lg bg-white">
+              <div
+                key={index}
+                className="flex justify-center items-center p-4 rounded-lg bg-white"
+              >
                 <img alt={emblem.name} src={emblem.image || "/placeholder.svg"} className="max-h-20 object-contain" />
               </div>
             ))}
           </div>
         </section>
 
-        <section
-          id="services"
-          className={`flex justify-center relative w-full overflow-hidden bg-zinc-100 transition-all duration-1000 ${visibleSections.has("services") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="services" className="flex justify-center relative w-full overflow-hidden bg-zinc-100">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl px-4 md:px-6 py-12 md:py-16">
               <div className="flex flex-col items-center text-center gap-6 md:gap-8 mb-12 md:mb-16">
@@ -841,18 +823,14 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="contact"
-          className={`flex justify-center relative w-full overflow-hidden bg-background transition-all duration-1000 ${visibleSections.has("contact") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="contact" className="flex justify-center relative w-full overflow-hidden bg-background">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl px-4 md:px-6 py-12 md:py-16">
               <div className="flex flex-col items-center text-center gap-6 md:gap-8 mb-12 md:mb-16">
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground">Get In Touch</h2>
                   <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                    Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as
-                    possible.
+                    Have questions? We&apos;d love to hear from you. Send us a message and we&apos;ll respond as soon as possible.
                   </p>
                 </div>
               </div>
@@ -956,7 +934,9 @@ export default function Home() {
                         <div>
                           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Address</p>
                           <p className="text-sm md:text-base text-foreground">
-                            3190 HW-160, Suite F, Pahrump, Nevada 89048, United States
+                            3190 HW-160, Suite F,
+                            Pahrump, Nevada 89048,
+                            United States
                           </p>
                         </div>
                       </div>
@@ -1006,10 +986,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section
-          id="map"
-          className={`flex justify-center relative w-full overflow-hidden bg-background transition-all duration-1000 ${visibleSections.has("map") ? "opacity-100" : "opacity-0"}`}
-        >
+        <section id="map" className="flex justify-center relative w-full overflow-hidden bg-background">
           <div className="flex justify-center w-full">
             <div className="w-full max-w-6xl px-4 md:px-6 pt-12 pb-6 md:py-16">
               <div className="flex flex-col items-center text-center gap-6 md:gap-8 mb-12 md:mb-16">
@@ -1059,36 +1036,36 @@ export default function Home() {
                   <h3 className="font-bold text-base md:text-lg">Quick Links</h3>
                   <ul className="space-y-2 text-sm">
                     <li>
-                      <a
+                      <Link
                         href="#home"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Home
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
+                        href="#about"
+                        className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                      >
+                        About
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
                         href="#listings"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Listings
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
-                        href="#services"
-                        className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
-                      >
-                        Services
-                      </a>
-                    </li>
-                    <li>
-                      <a
+                      <Link
                         href="#contact"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Contact
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -1098,28 +1075,28 @@ export default function Home() {
                   <h3 className="font-bold text-base md:text-lg">Services</h3>
                   <ul className="space-y-2 text-sm">
                     <li>
-                      <a
+                      <Link
                         href="#"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Residential Sales
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href="#"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Property Management
-                      </a>
+                      </Link>
                     </li>
                     <li>
-                      <a
+                      <Link
                         href="#"
                         className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
                       >
                         Market Analysis
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </div>
@@ -1130,9 +1107,9 @@ export default function Home() {
                   <ul className="space-y-3 text-sm">
                     <li className="text-primary-foreground/80">
                       <p className="font-semibold text-primary-foreground mb-1">Phone</p>
-                      <a href="tel:+12069196886" className="hover:text-primary-foreground transition-colors">
+                      <Link href="#" className="hover:text-primary-foreground transition-colors">
                         (206) 919-6886
-                      </a>
+                      </Link>
                     </li>
                     <li className="text-primary-foreground/80">
                       <p className="font-semibold text-primary-foreground mb-1">Address</p>
@@ -1152,18 +1129,18 @@ export default function Home() {
                     © {new Date().getFullYear()} Marci Metzger - The Ridge Realty Group. All rights reserved.
                   </p>
                   <div className="flex gap-4">
-                    <a
+                    <Link
                       href="#"
                       className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                     >
                       Privacy Policy
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="#"
                       className="text-primary-foreground/80 hover:text-primary-foreground transition-colors text-sm"
                     >
                       Terms of Service
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>
